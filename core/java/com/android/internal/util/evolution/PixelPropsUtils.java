@@ -32,6 +32,7 @@ import java.util.Map;
 public class PixelPropsUtils {
 
     public static final String PACKAGE_GMS = "com.google.android.gms";
+    public static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
     private static final String DEVICE = "org.evolution.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
     private static final boolean DEBUG = false;
@@ -73,7 +74,7 @@ public class PixelPropsUtils {
     private static final String[] streamingPackagesToChange = {
             "com.amazon.avod.thirdpartyclient",
             "com.disney.disneyplus",
-            "com.netflix.mediaclient",
+            PACKAGE_NETFLIX,
             "in.startv.hotstar"
     };
 
@@ -192,6 +193,11 @@ public class PixelPropsUtils {
             return;
         }
         if (Arrays.asList(packagesToKeep).contains(packageName)) {
+            return;
+        }
+        if (packageName.equals(PACKAGE_NETFLIX) && !SystemProperties.getBoolean(
+                "persist.pixelpropsutils.spoof_netflix", false)) {
+            if (DEBUG) Log.d(TAG, "Netflix spoofing disabled by system prop");
             return;
         }
         if (Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE))) {
