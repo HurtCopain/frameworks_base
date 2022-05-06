@@ -105,7 +105,8 @@ public class PixelPropsUtils {
     };
 
     private static final String[] packagesToChangeMI11 = {
-            "com.mobile.legends"
+            "com.mobile.legends",
+            "com.tencent.tmgp.sgame"
     };
 
     private static final String[] packagesToKeep = {
@@ -127,6 +128,11 @@ public class PixelPropsUtils {
             "com.google.android.dialer",
             "com.google.android.youtube",
             "com.google.ar.core"
+    };
+
+    // Codenames of devices using Star spoofing for apps
+    private static final String[] starSpoofedCodenames = {
+            "venus"
     };
 
     // Codenames for currently supported Pixels by Google
@@ -215,13 +221,20 @@ public class PixelPropsUtils {
         if (packageName.startsWith("com.google.")) {
 
             boolean isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
+            boolean isStarSpoofedDevice = Arrays.asList(starSpoofedCodenames).contains(SystemProperties.get(DEVICE));
 
             if (Arrays.asList(streamingPackagesToChange).contains(packageName)) {
                 if (SystemProperties.getBoolean("persist.sys.pixelprops.streaming", true)) {
                     propsToChange.putAll(propsToChangePixel6);
+                    if (packageName.equals(PACKAGE_NETFLIX) && (isStarSpoofedDevice)) {
+                        propsToChange.putAll(propsToChangeMI11);
+                    }
                 } else {
                     if (isPixelDevice) return;
                     propsToChange.putAll(propsToChangePixel5);
+                    if (packageName.equals(PACKAGE_NETFLIX) && (isStarSpoofedDevice)) {
+                        propsToChange.putAll(propsToChangeMI11);
+                    }
                 }
             }
             if (packageName.equals("com.google.android.apps.photos")) {
